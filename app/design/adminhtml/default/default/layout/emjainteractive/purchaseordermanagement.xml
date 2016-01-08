@@ -1,0 +1,106 @@
+<?xml version="1.0"?>
+<layout>
+
+    <adminhtml_sales_order_view>
+        <reference name="content">
+            <block type="emjainteractive_purchaseordermanagement/adminhtml_sales_order_view_payment_capture" name="sales_order_payment_capture" />
+        </reference>
+    </adminhtml_sales_order_view>
+
+    <adminhtml_sales_order_creditmemo_new>
+        <reference name="content">
+            <block type="emjainteractive_purchaseordermanagement/adminhtml_sales_order_view_payment_capture" name="sales_order_payment_capture" />
+        </reference>
+    </adminhtml_sales_order_creditmemo_new>    
+
+    <adminhtml_sales_order_invoice_view>
+        <reference name="content">
+            <block type="emjainteractive_purchaseordermanagement/adminhtml_sales_order_view_payment_capture" name="sales_order_payment_capture" />
+        </reference>
+    </adminhtml_sales_order_invoice_view>
+
+    <adminhtml_sales_order_invoice_new>
+        <reference name="head">
+            <action method="addItem"><type>skin_js</type><name>emjainteractive/purchaseordermanagement/capture.js</name></action>
+        </reference>
+        <reference name="content">
+            <block type="adminhtml/sales_order_create_billing_method" template="emjainteractive/purchaseordermanagement/sales/order/invoice/create/capture.phtml" name="capture_billing_method">
+                <block type="emjainteractive_purchaseordermanagement/adminhtml_sales_order_invoice_create_capture_method_form" template="emjainteractive/purchaseordermanagement/sales/order/invoice/create/capture/method/form.phtml" name="form" />
+            </block>
+            <block type="adminhtml/template" template="emjainteractive/purchaseordermanagement/sales/order/invoice/create/after.phtml" after="-" />
+        </reference>
+    </adminhtml_sales_order_invoice_new>
+
+    <po_order_grid_handle>
+        <reference name="sales_order.grid">
+
+            <action method="addColumnAfter">
+                <columnId>net_terms</columnId>
+                <arguments module="moogento_shipeasy" translate="header">
+                    <header>Net Terms</header>
+                    <index>net_terms</index>
+                    <type>text</type>
+                    <width>70px</width>
+                </arguments>
+                <after>status</after>
+            </action>
+
+            <action method="addColumnAfter">
+                <columnId>payment_method</columnId>
+                <arguments module="moogento_shipeasy" translate="header">
+                    <header>Payment Method</header>
+                    <index>payment_method</index>
+                    <type>options</type>
+                    <width>70px</width>
+                </arguments>
+                <after>net_terms</after>
+            </action>
+
+            <action method="addColumnAfter">
+                <columnId>po_number</columnId>
+                <arguments module="moogento_shipeasy" translate="header">
+                    <header>Purchase Order #</header>
+                    <index>po_number</index>
+                    <type>text</type>
+                    <width>70px</width>
+                </arguments>
+                <after>payment_method</after>
+            </action>
+
+        </reference>
+    </po_order_grid_handle>
+
+    <adminhtml_sales_order_index>
+        <update handle="po_order_grid_handle" />
+    </adminhtml_sales_order_index>
+    <adminhtml_sales_order_grid>
+        <update handle="po_order_grid_handle" />
+    </adminhtml_sales_order_grid>
+
+
+    <adminhtml_po_report_sales_sales>
+        <update handle="report_sales"/>
+        <reference name="content">
+            <block type="emjainteractive_purchaseordermanagement/adminhtml_report_sales_sales" template="report/grid/container.phtml" name="sales.report.grid.container">
+                <block type="adminhtml/store_switcher" template="report/store/switcher/enhanced.phtml" name="store.switcher">
+                    <action method="setStoreVarName"><var_name>store_ids</var_name></action>
+                </block>
+                <block type="emjainteractive_purchaseordermanagement/adminhtml_sales_report_form_order" name="grid.filter.form">
+                    <action method="addReportTypeOption" translate="value">
+                        <key>created_at_order</key>
+                        <value>Order Created Date</value>
+                    </action>
+                    <action method="addReportTypeOption" translate="value">
+                        <key>updated_at_order</key>
+                        <value>Order Updated Date</value>
+                    </action>
+                    <action method="setFieldOption" translate="value">
+                        <field>report_type</field>
+                        <option>note</option>
+                        <value>Order Updated Date report is real-time, does not need statistics refreshing.</value>
+                    </action>
+                </block>
+            </block>
+        </reference>
+    </adminhtml_po_report_sales_sales>
+</layout>

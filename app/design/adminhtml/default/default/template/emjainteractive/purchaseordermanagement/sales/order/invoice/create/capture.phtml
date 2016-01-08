@@ -1,0 +1,14 @@
+<div id="invoice_capture_methods">
+    <div class="box-left" id="invoice_capture_methods_container" style="display: none">
+        <div class="entry-edit">
+            <div class="entry-edit-head">
+                <div style="float: right;"><?php echo $this->getButtonsHtml() ?></div>
+                <h4 class="fieldset-legend <?php echo ($this->getHeaderCssClass()) ? $this->getHeaderCssClass().' icon-head' : '' ?>">Capture Payment Method</h4>
+            </div>
+            <div class="fieldset">
+                <?php echo $this->getChildHtml('', true, true) ?>
+            </div>
+        </div>
+    </div>
+    <div class="clear"></div>
+</div>

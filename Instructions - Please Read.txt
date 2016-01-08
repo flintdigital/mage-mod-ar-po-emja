@@ -1,0 +1,48 @@
+- Install/copy files from .zip onto your hosting account (via FTP). Please
+backup any files that will be replaced if needed.
+
+- After files ware uploaded change the permissions on the following folder media/orderPdf to 777 permissions.
+
+- Logout/Login to your magento admin panel and refresh/flush your cache.
+Now go to System > Configuration > Sales > Payment Methods > Purchase Orders.
+Once there you now have the ability to enable Purchase Orders and choose
+between "Pending" and "Processing" for your New Order Status and Save Config.
+Also you have the ability to set a "Default Limit" which sets a default limit to 
+each PO customer you create (adjustable manually as well). Also we give you the
+ability to input a "Limit Exceeded Message" in the config. NOTE: When you don't set
+a "PO LIMIT" for a custoner (input is blank) it will automatically use the default limit
+set via config.
+
+- Now your module is enabled, you can enter orders via Admin or on Frontend
+using Purchase Orders and have full management support. If you do NOT want
+the Frontend Customers to be able to create orders with Purchase order option
+yet want to have the option in backend, there is a seperate extension for
+this called: "Advanced Payment Methods - Purchase Orders" and can be found here:
+http://www.emjainteractive.com/magento-extensions/magento-admin-payment-methods-purchase-orders-admin-backend-only.html
+
+- Via the Invoice, it will not display a Remit To Address until the value is entered via the configuration. Enter your Remit To Address for customers to mail you their payment in this config box in order to be displayed via the Invoice.
+
+- Now you can set "Net Terms" and set a "PO Limit" (default set to $5,000) for exsisting and new customers managed in
+Customers > Manage Customers and select your customers you wish to add terms.
+For new customers the option to add terms to them is available at the time of creation.
+
+- Once a customer places (or created by admin) an order with Purchase Order
+as the payment method it will show up as Pending/Processing in Orders. You now 
+have the ability to "Print PO Invoice" from within the order screen. Once order
+is processed/shipped it will ship up as "Shipped, pending payment". So you know
+that the order was shipped but is still outstanding (awaiting payment).
+
+- Once you get your payment in, just login to the order and click "Invoice" and
+process it. This will turn the order to "Completed" notifying it's been paid
+and shipped.
+
+- For a report for outstanding PO payments for your "Purchase Order" orders. Just go
+to Reports > Sales > Purchase Orders and this report will only show you the report on order that
+are in the "Shipped, pending payment" status. If orders are in pending, processing,
+or Completed they will NOT show up in this report. This report is only meant to 
+show you your outstanding payments you are awaiting.
+
+
+
+
+

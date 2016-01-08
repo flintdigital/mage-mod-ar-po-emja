@@ -1,0 +1,428 @@
+<?php
+$baseUrl = Mage::getBaseUrl();
+$baseUrl = str_replace('index.php/', '', $baseUrl);
+?>
+
+<div class="content-header">
+    <table cellspacing="0">
+        <tr>
+            <td style="<?php echo $this->getHeaderWidth() ?>"><?php echo $this->getHeaderHtml() ?></td>
+            <td class="form-buttons"><?php echo $this->getButtonsHtml() ?></td>
+        </tr>
+    </table>
+</div>
+
+<div id="note-container" style="display:none;">
+	<div id="note-content-container" class="content-header">
+    	<h3 class="icon-head head-adminhtml-accountreceivable">Notes</h3>
+        <div id="close-btn" onclick="$('note-container').hide();"><img id="zenbox_close" src="<?php echo $baseUrl.'skin/adminhtml/default/default/emjainteractive/accountreceivable/images/close_big.png' ?>" alt="X"></div>
+        <input type="hidden" id="transaction-id" value="" />
+        <textarea id="note-content"></textarea>
+        <button onclick="saveNote()" type="button" title="Save Note" id="save-note"><span><span><span>Save Note</span></span></span></button>
+    </div>
+</div>
+
+<?php
+$company_name = $this->getRequest()->getParam('company_name');
+$from = $this->getRequest()->getParam('from');
+$to = $this->getRequest()->getParam('to');
+
+$fromFormatted = NULL;
+$toFormatted = NULL;
+
+if($from != '')	$fromFormatted	= date('Y-m-d', strtotime($from));
+if($to != '')	$toFormatted	= date('Y-m-d', strtotime($to));
+
+Zend_Date::setOptions(array('format_type' => 'php'));
+?>
+<div>
+    <div class="entry-edit">
+        <form method="get" action="<?php $this->getUrl('*/*/*') ?>" id="ar_report_form">
+            <div></div>
+            <div class="fieldset" style="background-color:#E3EFF1">
+                <div class="hor-scroll">
+                    <table cellspacing="0" class="form-list">
+                        <tbody>
+                            <tr>
+                                <td class="label"><label for="sales_report_period_type">Company Name:</label></td>
+                                <?php
+								$addressCollection = Mage::getModel('customer/address')->getCollection()->addAttributeToSelect('company');
+								$companies = array();
+								foreach($addressCollection as $address) {
+									if($address->getCompany() != '')
+									$companies[$address->getCompany()] = 1;
+								}
+								ksort($companies);
+								?>
+                                <td class="value">
+                                    <select class="select" title="Company Name" name="company_name" id="company_name">
+                                        <option value="all"></option>
+                                        <?php foreach($companies as $company => $value) { ?>
+                                        <option value="<?php echo $company ?>" <?php echo $company == $company_name ? 'selected="selected"' : '' ?>><?php echo $company ?></option>
+                                        <?php } ?>
+                                    </select>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="entry-edit-head">
+                <h4 class="icon-head head-edit-form fieldset-legend">Filter</h4>
+                <div class="form-buttons"></div>
+            </div>
+            
+            <div class="fieldset">
+                <div class="hor-scroll">
+                    <table cellspacing="0" class="form-list">
+                        <tbody>
+                            <!--<tr>
+                                <td class="label"><label for="sales_report_period_type">Period</label></td>
+                                <td class="value">
+                                    <select class=" select" title="Period" name="period_type" id="sales_report_period_type">
+                                        <option value="day">Day</option>
+                                        <option value="month">Month</option>
+                                        <option value="year">Year</option>
+                                    </select>
+                                </td>
+                            </tr>-->
+                            <tr>
+                                <td class="label"><label for="ar_report_from">From</label></td>
+                                <td class="value">
+                                    <input type="text" style="width:110px !important;" class=" required-entry input-text" title="From" value="<?php echo $from ?>" id="ar_report_from" name="from" />
+                                    <img style="" title="Select Date" id="ar_report_from_trig" class="v-middle" alt="" src="<?php echo $baseUrl.'skin/adminhtml/default/default/images/grid-cal.gif'; ?>">
+                                    <script type="text/javascript">
+                                        //<![CDATA[
+                                        Calendar.setup({
+                                            inputField: "ar_report_from",
+                                            ifFormat: "%m/%e/%Y",
+                                            showsTime: false,
+                                            button: "ar_report_from_trig",
+                                            align: "Bl",
+                                            singleClick : true
+                                        });
+                                        //]]>
+                                    </script>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label"><label for="ar_report_to">To</label></td>
+                                <td class="value">
+                                    <input type="text" style="width:110px !important;" class=" required-entry input-text" title="To" value="<?php echo $to ?>" id="ar_report_to" name="to" />
+                                    <img style="" title="Select Date" id="ar_report_to_trig" class="v-middle" alt="" src="<?php echo $baseUrl.'skin/adminhtml/default/default/images/grid-cal.gif'; ?>">
+                                    <script type="text/javascript">
+                                        //<![CDATA[
+                                        Calendar.setup({
+                                            inputField: "ar_report_to",
+                                            ifFormat: "%m/%e/%Y",
+                                            showsTime: false,
+                                            button: "ar_report_to_trig",
+                                            align: "Bl",
+                                            singleClick : true
+                                        });
+                                        //]]>
+                                    </script>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </form>
+	</div>
+</div>
+
+<div>
+	<div id="id_rand_div">
+		<table cellspacing="0" class="actions">
+        	<tbody>
+            	<tr>
+                    <td class="export a-right">
+                    	<img class="v-middle" alt="" src="<?php echo $baseUrl.'skin/adminhtml/default/default/images/icon_export.gif' ?>" />&nbsp; Export to:
+                        <select style="width:8em;" id="export-button" name="export-button">
+                            <option value="<?php echo Mage::helper('adminhtml')->getUrl('*/*/exportCsv') ?>">CSV</option>
+                            <option value="<?php echo Mage::helper('adminhtml')->getUrl('*/*/exportXml') ?>">XML</option>
+                        </select>
+                        <button onclick="exportCsvXml()" class="scalable task" type="button" title="Export"><span><span><span>Export</span></span></span></button>
+                    </td>
+                    <td class="filter-actions a-right"></td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="grid">
+        	<div class="hor-scroll">
+            	<table cellspacing="0" id="id_rand_table" class="data">
+                    <colgroup>
+                        <col width="120">
+                        <col width="100">
+                        <col width="100">
+                        <col width="80">
+                        <col width="100">
+                        <col width="90">
+                        <col width="90">
+                        <col width="100">
+                        <col width="90">
+                        <col width="90">
+                        <col width="120">
+                        <col width="130">
+                    </colgroup>
+                    <thead>
+                    	<tr class="headings">
+                        	<th class="no-link" style="text-align:center"><span class="nobr">Transaction Number</span></th>
+                            <th class="no-link" style="text-align:center"><span class="nobr">Transaction Type</span></th>
+                            <th class="no-link" style="text-align:center"><span class="nobr">Transaction Date</span></th>
+                            <th class="no-link" style="text-align:center"><span class="nobr">Company</span></th>
+                            <th class="no-link" style="text-align:center"><span class="nobr">Purchase Order Number</span></th>
+                            <th class="no-link" style="text-align:center"><span class="nobr">Due Date</span></th>
+                            <th class="no-link" style="text-align:center"><span class="nobr">Days Past Due</span></th>
+                            <th class="no-link" style="text-align:center"><span class="nobr">Terms</span></th>
+                            <th class="no-link" style="text-align:center"><span class="nobr">Transaction Amount</span></th>
+                            <th class="no-link" style="text-align:center"><span class="nobr">Discount</span></th>
+                            <th class="no-link" style="text-align:center"><span class="nobr">Open Amount</span></th>
+                            <th class="no-link" style="text-align:center"><span class="nobr">Payment Method</span></th>
+                            <th class="no-link last" style="text-align:center"><span class="nobr">Notes</span></th>
+                        </tr>
+                    </thead>
+					<?php
+					$poNumbers = array();
+					$allOrderCollection = $this->getAllOrderCollection();
+					foreach($allOrderCollection as $allOrder) {
+						$poNumbers[$allOrder->getId()] = $allOrder->getPoNumber();
+					}
+					
+					$orderCollection = $this->getOrderCollection($fromFormatted, $toFormatted);
+                    $creditmemoCollection = $this->getCreditMemoCollection($fromFormatted, $toFormatted);
+					$invoiceCollection = $this->getInvoiceCollection($fromFormatted, $toFormatted);
+					
+					?>
+                    <tbody>
+                    	<?php
+						if(count($orderCollection) or count($creditmemoCollection) or count($invoiceCollection)) {
+							$customerModel = Mage::getModel('customer/customer');
+							$addressModel = Mage::getModel('customer/address');
+							
+							foreach($orderCollection as $order) {
+								if($order->getBillingAddress()->getCompany() and $company_name != '' and $company_name != 'all' and $order->getBillingAddress()->getCompany() != $company_name) continue;
+								
+								$orderDetails = Mage::getSingleton('sales/order')->load($order->getId());
+								$orderCompany = '';
+								if($order->getCustomerId() == NULL) {
+									$orderCompany = $order->getBillingAddress()->getCompany();
+									if(($company_name != '' and $company_name != 'all') and $order->getBillingAddress()->getCompany() != $company_name) {
+										continue;
+									}
+								} elseif($order->getCustomerId()) {
+									$customer = $customerModel->load($order->getCustomerId());
+									$billingAddress = $customer->getDefaultBilling();
+									if($billingAddress) {
+										$address = $addressModel->load($billingAddress);
+										$orderCompany = $address->getCompany();
+										if(($company_name != '' and $company_name != 'all') and $address->getCompany() != $company_name)
+										continue;
+									}
+								}
+								
+								$orderDueDate = '';
+								$netTerms = $order->getNetTerms();
+								if(!empty($netTerms)) {
+									$shipmentDate = NULL;
+									foreach($order->getShipmentsCollection() as $shipment) {
+										$shipmentDate = $shipment->getCreatedAt();
+										break;
+									}
+									
+									if($shipmentDate) {
+										$date = new Zend_Date($shipmentDate, 'Y-m-d');
+										$date->addDay(30); //$date->addDay($netTerms);
+										$orderDueDate = $date->get('n/j/Y');
+									} else {
+										$date = new Zend_Date($order->getCreatedAt(), 'Y-m-d');
+										$date->addDay(30); //$date->addDay($netTerms);
+										$orderDueDate = $date->get('n/j/Y');
+									}
+								} else {
+									$shipmentDate = NULL;
+									foreach($order->getShipmentsCollection() as $shipment) {
+										$shipmentDate = $shipment->getCreatedAt();
+										break;
+									}
+									
+									if($shipmentDate) {
+										$date = new Zend_Date($shipmentDate, 'Y-m-d');
+										$orderDueDate = $date->get('n/j/Y');
+									} else {
+										$date = new Zend_Date($order->getCreatedAt(), 'Y-m-d');
+										$orderDueDate = $date->get('n/j/Y');
+									}
+								}
+								
+								$orderDaysPastDue = '';
+								$today = new Zend_Date();
+								$diff = $today->sub($date)->toValue();
+								$orderDaysPastDue = ceil($diff/60/60/24) - 1;
+								
+								if($orderDaysPastDue <= 0)
+									$orderDaysPastDue = '';
+								
+								if(!empty($netTerms))
+									$netTerms = 'NET ' . $netTerms;
+								
+								?>
+								<tr>
+									<td style="text-align:center"><a href="<?php echo $this->getUrl('adminhtml/sales_order/view', array('order_id' => $order->getId())) ?>"><?php echo $order->getIncrementId() ?></a></td>
+									<td style="text-align:center">Purchase Order</td>
+									<td style="text-align:center"><?php echo date('n/j/Y', strtotime($order->getCreatedAt())) ?></td>
+									<td style="text-align:center"><?php echo $orderCompany ? $orderCompany : $order->getBillingAddress()->getCompany() ?></td>
+									<td style="text-align:center"><?php echo $order->getPoNumber() ?></td>
+									<td style="text-align:center"><?php echo $orderDueDate ?></td>
+									<td style="text-align:center"><?php echo $orderDaysPastDue ?></td>
+									<td style="text-align:center"><?php echo $netTerms ?></td>
+									<td class="a-right"><?php echo Mage::helper('core')->currency($order->getGrandTotal() + abs($orderDetails->getDiscountAmount()), true, false) ?></td>
+									<td class="a-right"><?php echo abs($orderDetails->getDiscountAmount()) ? Mage::helper('core')->currency(abs($orderDetails->getDiscountAmount()), true, false) : '&nbsp;' ?></td>
+									<td class="a-right"><?php echo Mage::helper('core')->currency($order->getGrandTotal(), true, false) ?></td>
+									<td style="text-align:center">&nbsp;</td>
+									<td class="last" style="text-align:center"><a href="#" onclick="return viewNote('<?php echo $order->getIncrementId() ?>')"><?php echo $this->getTransactionNote($order->getIncrementId()) == '' ? 'Add Note' : 'View Note'; ?></a></td>
+								</tr>
+							<?php
+							}
+							
+						foreach($creditmemoCollection as $creditmemo) {
+							$cmOrder = Mage::getSingleton('sales/order')->load($creditmemo->getOrderId());
+							
+							if($cmOrder->getBillingAddress()->getCompany() and $company_name != '' and $company_name != 'all' and $cmOrder->getBillingAddress()->getCompany() != $company_name) continue;
+							
+							if($cmOrder->getPoNumber()) {
+								$orderCompany = '';
+								if($cmOrder->getCustomerId() == NULL) {
+									$orderCompany = $cmOrder->getBillingAddress()->getCompany();
+									if(($company_name != '' and $company_name != 'all') and $cmOrder->getBillingAddress()->getCompany() != $company_name) {
+										continue;
+									}
+								} elseif($cmOrder->getCustomerId()) {
+									$customer = $customerModel->load($cmOrder->getCustomerId());
+									$billingAddress = $customer->getDefaultBilling();
+									if($billingAddress) {
+										$address = $addressModel->load($billingAddress);
+										$orderCompany = $address->getCompany();
+										if(($company_name != '' and $company_name != 'all') and $address->getCompany() != $company_name)
+										continue;
+									}
+								}
+								?>
+								<tr>
+									<td style="text-align:center"><a href="<?php echo $this->getUrl('adminhtml/sales_creditmemo/view', array('creditmemo_id' => $creditmemo->getId())) ?>"><?php echo $creditmemo->getIncrementId() ?></a></td>
+									<td style="text-align:center">Credit Memo</td>
+									<td style="text-align:center"><?php echo date('n/j/Y',strtotime($creditmemo->getCreatedAt())) ?></td>
+									<td style="text-align:center"><?php echo $orderCompany ? $orderCompany : $cmOrder->getBillingAddress()->getCompany() ?></td>
+                                    <td style="text-align:center">PO</td>
+									<td style="text-align:center">&nbsp;</td>
+									<td style="text-align:center">&nbsp;</td>
+									<td style="text-align:center">&nbsp;</td>
+									<td class="a-right"><?php echo '-'.Mage::helper('core')->currency($creditmemo->getGrandTotal(), true, false) ?></td>
+									<td class="a-right">&nbsp;</td>
+									<td class="a-right"><?php echo '-'.Mage::helper('core')->currency($creditmemo->getGrandTotal(), true, false) ?></td>
+									<td style="text-align:center">&nbsp;</td>
+									<td class="last" style="text-align:center">&nbsp;</td>
+								</tr>
+							<?php }
+						}
+						
+						foreach($invoiceCollection as $invoice) {
+							if(array_key_exists($invoice->getOrderId(), $poNumbers)) {
+								$invOrder = Mage::getSingleton('sales/order')->load($invoice->getOrderId());
+								
+								if($invOrder->getBillingAddress()->getCompany() and $company_name != '' and $company_name != 'all' and $invOrder->getBillingAddress()->getCompany() != $company_name) continue;
+								
+								$orderCompany = '';
+								if($invOrder->getCustomerId() == NULL) {
+									$orderCompany = $invOrder->getBillingAddress()->getCompany();
+									if(($company_name != '' and $company_name != 'all') and $invOrder->getBillingAddress()->getCompany() != $company_name) {
+										continue;
+									}
+								} elseif($invOrder->getCustomerId()) {
+									$customer = $customerModel->load($invOrder->getCustomerId());
+									$billingAddress = $customer->getDefaultBilling();
+									if($billingAddress) {
+										$address = $addressModel->load($billingAddress);
+										$orderCompany = $address->getCompany();
+										if(($company_name != '' and $company_name != 'all') and $address->getCompany() != $company_name)
+										continue;
+									}
+								}
+								
+								?>
+								<tr>
+									<td style="text-align:center"><a href="<?php echo $this->getUrl('adminhtml/sales_invoice/view', array('invoice_id' => $invoice->getId())) ?>"><?php echo $invoice->getIncrementId() ?></a></td>
+									<td style="text-align:center">Invoice</td>
+									<td style="text-align:center"><?php echo date('n/j/Y',strtotime($invoice->getCreatedAt())) ?></td>
+									<td style="text-align:center"><?php echo $orderCompany ? $orderCompany : $invOrder->getBillingAddress()->getCompany() ?></td>
+                                    <td style="text-align:center"><?php echo $poNumbers[$invoice->getOrderId()] ?></td>
+									<td style="text-align:center">&nbsp;</td>
+									<td style="text-align:center">&nbsp;</td>
+									<td style="text-align:center">&nbsp;</td>
+									<td class="a-right"><?php echo '-'.Mage::helper('core')->currency($invoice->getGrandTotal(), true, false) ?></td>
+									<td class="a-right">&nbsp;</td>
+									<td class="a-right"><?php echo '-'.Mage::helper('core')->currency($invoice->getGrandTotal(), true, false) ?></td>
+									<td style="text-align:center"><?php echo $invoice->getOfflineCaptureMethod().' - '.$invoice->getOfflineCaptureReference() ?></td>
+									<td class="last" style="text-align:center">&nbsp;</td>
+								</tr>
+							<?php }
+							}
+						} else { ?>
+                        <tr class="even">
+                        	<td colspan="13" class="empty-text a-center">No records found.</td>
+                        </tr>
+                        <?php } ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+function viewNote(inc_id) {
+	var url = '<?php echo $this->getUrl('*/*/getNoteText') ?>';
+	new Ajax.Request(url, {
+		parameters: {isAjax: 1, method: 'POST', increment_id: inc_id},
+		onSuccess: function(transport) {
+			response = eval('(' + transport.responseText + ')');
+			$('transaction-id').value = response.transaction_id;
+			$('note-content').update(response.note_text);
+			$('note-container').show();
+		}
+	});
+	
+	return false;
+}
+
+function saveNote() {
+	var note = $F('note-content');
+	if(note != '') {
+		var url = '<?php echo $this->getUrl('*/*/saveNoteText') ?>';
+		new Ajax.Request(url, {
+			parameters: {isAjax: 1, method: 'POST', increment_id: $F('transaction-id'), notes: $F('note-content')},
+			onLoading: function() { $('note-container').hide(); },
+			onSuccess: function() { window.location.href = '<?php echo $this->getUrl('*/*/index') ?>'; }
+		});
+	}
+	
+	return false;
+}
+
+function exportCsvXml() {
+	var mainUrl = $F('export-button');
+	var queryStr = '?company_name=' + $F('company_name');
+	
+	if($F('ar_report_from') != '') {
+		queryStr = queryStr + '&from=' + $F('ar_report_from');
+	}
+	
+	if($F('ar_report_to') != '') {
+		queryStr = queryStr + '&to=' + $F('ar_report_to');
+	}
+	
+	window.open(mainUrl + queryStr);
+}
+</script>

@@ -1,0 +1,31 @@
+#note-container {
+	 width:280px;
+	 height:180px;
+	 position:fixed;
+	 top:176px;
+	 left:912px;
+	 border:1px solid #000;
+	 background-color:#fff;
+}
+
+#close-btn {
+	width:30px;
+	float:right;
+	cursor:pointer;
+	position:fixed;
+	top:152px;
+	left:1170px;
+}
+
+#save-note {
+	float:right;
+	margin-right:4px;
+	margin-bottom:2px;
+}
+
+textarea {
+    resize: none;
+	height:120px;
+	width:264px;
+	margin:0 3px 5px 5px;
+}

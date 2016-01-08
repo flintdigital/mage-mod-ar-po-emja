@@ -1,0 +1,51 @@
+<div id="capture_payment_info_container">
+    <div class="box-left">
+        <div class="entry-edit">
+            <div class="entry-edit-head">
+                <h4 class="icon-head head-payment-method"><?php echo Mage::helper('sales')->__('Capture Information') ?></h4>
+            </div>
+            <fieldset>
+                <?php echo $this->getChildHtml('info') ?>
+            </fieldset>
+        </div>
+    </div>
+    <div class="clear"></div>
+</div>
+
+<script type="text/javascript">
+//<![CDATA[
+    document.observe("dom:loaded", function() {
+        if ($('capture_payment_info_container')) {
+            if ($('sales_order_view_tabs_order_info_content')) {
+                _grid = $('sales_order_view_tabs_order_info_content').select('div.grid');
+                _grid = _grid[0];
+                _prevClear = $(_grid).previous('div.clear');
+
+                new Insertion.After(
+                    $(_prevClear),
+                    $('capture_payment_info_container').innerHTML
+                );
+
+                Element.remove($('capture_payment_info_container'));
+            } else if ($('page:main-container')) {
+
+                _prevClear = false;
+
+                if ($('invoice_item_container')) {
+                    _prevClear = $($('invoice_item_container').up('div.entry-edit')).previous('div.clear');
+                }
+                if ($('creditmemo_item_container')) {
+                    _prevClear = $('creditmemo_item_container').previous('div.clear');
+                }
+
+                new Insertion.After(
+                    $(_prevClear),
+                    $('capture_payment_info_container').innerHTML
+                );
+
+                Element.remove($('capture_payment_info_container'));
+            }
+        }
+    });
+//]]>
+</script>

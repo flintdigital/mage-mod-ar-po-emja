@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <EmjaInteractive_Accountreceivable>
+            <active>true</active>
+            <codePool>local</codePool>
+        </EmjaInteractive_Accountreceivable>
+    </modules>
+</config> 

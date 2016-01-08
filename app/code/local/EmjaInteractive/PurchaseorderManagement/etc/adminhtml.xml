@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<config>
+    <menu>
+        <report>
+            <children>
+                <salesroot>
+                    <children>
+                        <purchaseorder translate="title" module="emjainteractive_purchaseordermanagement">
+                            <title>Purchase Orders</title>
+                            <action>adminhtml/po_report_sales/sales</action>
+                        </purchaseorder>
+                    </children>
+                </salesroot>
+            </children>
+        </report>
+    </menu>
+    <acl>
+        <resources>
+            <admin>
+                <children>
+                    <report>
+                        <children>
+                            <salesroot>
+                                <children>
+                                    <purchaseorder translate="title" module="emjainteractive_purchaseordermanagement">
+                                        <title>Purchase Orders</title>
+                                    </purchaseorder>
+                                </children>
+                            </salesroot>
+                        </children>
+                    </report>
+                </children>
+            </admin>
+        </resources>
+    </acl>
+</config>
