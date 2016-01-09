@@ -33,7 +33,7 @@ if ($attributeId) {
 }
 
 $installer->addAttribute('customer', 'po_credit', array(
-    'label'         => Mage::helper('emjainteractive_purchaseordermanagement')->__('PO Credit'),
+    'label'         => Mage::helper('emjainteractive_purchaseordermanagement')->__('PO Credit Left'),
     'visible'       => false,
     'required'      => false,
     'type'          => 'varchar',

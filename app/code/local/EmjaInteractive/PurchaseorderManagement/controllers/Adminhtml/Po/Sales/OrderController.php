@@ -8,7 +8,9 @@ class EmjaInteractive_PurchaseorderManagement_Adminhtml_Po_Sales_OrderController
         if ($orderId = $this->getRequest()->getParam('order_id')) {
             if ($order = Mage::getModel('sales/order')->load($orderId)) {
                 $pdf = Mage::getModel('emjainteractive_purchaseordermanagement/sales_order_pdf')->getPdf(array($order));
-                return $this->_prepareDownloadResponse('order'.Mage::getSingleton('core/date')->date('Y-m-d_H-i-s').'.pdf', $pdf->render(), 'application/pdf');
+                $incrementid = $order->getIncrementId();
+                return $this->_prepareDownloadResponse('MethodSevenInvoice_#'.$incrementid.'.pdf', $pdf->render(), 'application/pdf');
+//                 return $this->_prepareDownloadResponse('order'.Mage::getSingleton('core/date')->date('Y-m-d_H-i-s').'.pdf', $pdf->render(), 'application/pdf');
             }
         }
         else {
@@ -32,7 +34,12 @@ class EmjaInteractive_PurchaseorderManagement_Adminhtml_Po_Sales_OrderController
             }
 
             if ($flag) {
-                return $this->_prepareDownloadResponse('order'.Mage::getSingleton('core/date')->date('Y-m-d_H-i-s').'.pdf', $pdf->render(), 'application/pdf');
+            	$firstOrderId = reset($orderIds);
+            	$order = Mage::getModel('sales/order')->load($firstOrderId);
+            	
+            	$incrementid = $order->getIncrementId();
+            	return $this->_prepareDownloadResponse('MethodSevenInvoice_#'.$incrementid.'.pdf', $pdf->render(), 'application/pdf');
+//                 return $this->_prepareDownloadResponse('order'.Mage::getSingleton('core/date')->date('Y-m-d_H-i-s').'.pdf', $pdf->render(), 'application/pdf');
             } else {
                 $this->_getSession()->addError($this->__('There are no printable documents related to selected orders.'));
                 $this->_redirect('*/sales_order/');

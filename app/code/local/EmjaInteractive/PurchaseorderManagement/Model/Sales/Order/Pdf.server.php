@@ -2,6 +2,7 @@
 
 class EmjaInteractive_PurchaseorderManagement_Model_Sales_Order_Pdf extends Mage_Sales_Model_Order_Pdf_Abstract
 {
+       
     protected function _addPaidIcon(&$page)
     {
         $image = Mage::helper('emjainteractive_purchaseordermanagement')->getIconFullPath();
@@ -32,7 +33,7 @@ class EmjaInteractive_PurchaseorderManagement_Model_Sales_Order_Pdf extends Mage
             $pdf->pages[] = $page;
 
             /* Add image */
-//             $this->insertLogo($page, $order->getStore());
+            $this->insertLogo($page, $order->getStore());
 
             /* Add address */
             $this->insertAddress($page, $order->getStore());
@@ -45,8 +46,8 @@ class EmjaInteractive_PurchaseorderManagement_Model_Sales_Order_Pdf extends Mage
              */
 
             if (Mage::helper('emjainteractive_purchaseordermanagement')->isPurchaseOrder($order)) {
-//                 $this->_setFontBold($page, 20);
-//                 $page->drawText(Mage::getStoreConfig('payment/purchaseorder/store_name'), 250, 765, 'UTF-8');
+                $this->_setFontBold($page, 20);
+                $page->drawText(Mage::getStoreConfig('payment/purchaseorder/store_name'), 250, 765, 'UTF-8');
             }
 
             if (Mage::helper('emjainteractive_purchaseordermanagement')->isPurchaseOrder($order) && !$order->canInvoice()) {
@@ -107,33 +108,19 @@ class EmjaInteractive_PurchaseorderManagement_Model_Sales_Order_Pdf extends Mage
 			$memoArr = explode(' ', $memoText);
 			
 			$y = 30;
-			$memoX = 10;
 			$memo = "";
-			
-			//Not used: 18 words per memo line
 			$limiter = 18;
-			
-			//100 chars per memo line
-			$charLimit = 100;
-			
 			for ($i = 0; $i < count($memoArr); $i++) {
-				if(strlen($memo.$memoArr[$i]) > $charLimit) {
-					$page->drawText(trim($memo), $memoX, $this->y-$y, 'UTF-8');
+				$memo .= $memoArr[$i]." ";
+				
+				if ($i and $i % $limiter == 0) {
+					$page->drawText(trim($memo), 10, $this->y-$y, 'UTF-8');
 					$memo = "";
 					$y += 10;
 				}
-				
-				$memo .= $memoArr[$i]." ";
-				
-// 				if ($i and $i % $limiter == 0) {
-					
-// 				}
 			}
-			if (!empty($memo)) $page->drawText(trim($memo), $memoX, $this->y-$y, 'UTF-8');
+			if (!empty($memo)) $page->drawText(trim($memo), 10, $this->y-$y, 'UTF-8');
 		}
-		
-		
-		$this->insertLogo($pdf->pages[0], $order->getStore());
 		
 		$this->_afterGetPdf();
 
@@ -207,19 +194,13 @@ class EmjaInteractive_PurchaseorderManagement_Model_Sales_Order_Pdf extends Mage
 
         $page->setFillColor(new Zend_Pdf_Color_GrayScale(0.45));
         $page->setLineColor(new Zend_Pdf_Color_GrayScale(0.45));
-        $page->drawRectangle(25, $top, 570, $top - 65);
+        $page->drawRectangle(25, $top, 570, $top - 55);
         $page->setFillColor(new Zend_Pdf_Color_GrayScale(1));
         $this->setDocHeaderCoordinates(array(25, $top, 570, $top - 55));
-        
-        $this->_setFontBold($page, 15);
-        
-        $page->drawText(
-            Mage::helper('sales')->__('INVOICE'), 35, $top - 15, 'UTF-8'
-        );
-        
-        $this->_setFontRegular($page, 13);
-        if ($putOrderId) {
-            $page->drawText(
+		
+		$this->_setFontRegular($page, 13);
+		if ($putOrderId) {
+			$page->drawText(
                 Mage::helper('sales')->__('Order # ') . $order->getRealOrderId(), 35, ($top -= 30), 'UTF-8'
             );
         }
@@ -231,20 +212,6 @@ class EmjaInteractive_PurchaseorderManagement_Model_Sales_Order_Pdf extends Mage
             ($top -= 15),
             'UTF-8'
         );
-        
-        $dueDays = $order->getData('net_terms');
-        //Default Due Days (Net Terms): 30
-        $dueDays = is_numeric($dueDays) && $dueDays > 0 ? $dueDays : 30;
-        $dueDate = date('Y-m-d', strtotime($order->getCreatedAtStoreDate(). ' + '.$dueDays.' days'));
-        $page->drawText(
-        		Mage::helper('sales')->__('Due Date: ') . Mage::helper('core')->formatDate(
-        				$dueDate, 'medium', false
-        		),
-        		35,
-        		($top -= 15),
-        		'UTF-8'
-        );
-        
 
 		$this->_setFontRegular($page, 10);
 		$top -= 10;
@@ -270,7 +237,6 @@ class EmjaInteractive_PurchaseorderManagement_Model_Sales_Order_Pdf extends Mage
                 unset($payment[$key]);
             }
         }
-        
         reset($payment);
 
         /* Shipping Address and Method */
@@ -463,78 +429,4 @@ class EmjaInteractive_PurchaseorderManagement_Model_Sales_Order_Pdf extends Mage
             $this->_yPosition -= 15;
         }
     }
-    
-    
-    /**
-     * Insert logo to pdf page
-     *
-     * @param Zend_Pdf_Page $page
-     * @param null $store
-     */
-    protected function insertLogo(&$page, $store = null)
-    {
-    	$this->y = $this->y ? $this->y : 815;
-    	$image = Mage::getStoreConfig('sales/identity/logo', $store);
-    	if ($image) {
-    		$image = Mage::getBaseDir('media') . '/sales/store/logo/' . $image;
-    		if (is_file($image)) {
-    			$image       = Zend_Pdf_Image::imageWithPath($image);
-    			$top         = 830; //top border of the page
-    			$widthLimit  = 270; //half of the page width
-    			$heightLimit = 270; //assuming the image is not a "skyscraper"
-    			$width       = $image->getPixelWidth();
-    			$height      = $image->getPixelHeight();
-    
-    			//preserving aspect ratio (proportions)
-    			$ratio = $width / $height;
-    			if ($ratio > 1 && $width > $widthLimit) {
-    				$width  = $widthLimit;
-    				$height = $width / $ratio;
-    			} elseif ($ratio < 1 && $height > $heightLimit) {
-    				$height = $heightLimit;
-    				$width  = $height * $ratio;
-    			} elseif ($ratio == 1 && $height > $heightLimit) {
-    				$height = $heightLimit;
-    				$width  = $widthLimit;
-    			}
-    
-    			$y1 = $top - $height;
-    			$y2 = $top;
-    			
-    			$y1 = 760;
-    			$y2 = $y1 + $height;
-    			
-    			$x1 = 250;
-    			$x2 = $x1 + $width;
-    
-    			//coordinates after transformation are rounded by Zend
-    			$page->drawImage($image, $x1, $y1, $x2, $y2);
-    
-//     			$this->y = $top - $height - 10;
-    		}
-    	}
-    }
-    
-    protected function _setFontRegular($object,$size = 6)
-    {
-    	$font = Zend_Pdf_Font::fontWithName(Zend_Pdf_Font::FONT_HELVETICA);
-    	$object->setFont($font, $size);
-    	return $font;
-    }
-    
-    protected function _setFontBold($object,$size = 6)
-    {
-    	$font = Zend_Pdf_Font::fontWithName(Zend_Pdf_Font::FONT_HELVETICA_BOLD);
-    	$object->setFont($font, $size);
-    	return $font;
-    }
-    
-    protected function _setFontItalic($object,$size = 7)
-    {
-    	$font = Zend_Pdf_Font::fontWithName(Zend_Pdf_Font::FONT_HELVETICA_BOLD_ITALIC);
-    	$object->setFont($font, $size);
-    	return $font;
-    }
-    
-    
 }
