@@ -1,0 +1,7 @@
+<?php /** @var Mage_Sales_Model_Order $order */ ?>
+<?php $order = Mage::registry('current_order'); ?>
+<?php $_helper = Mage::helper('emjainteractive_purchaseordermanagement') ?>
+<?php if ($_helper->isPurchaseOrder($order) && $_helper->canMakePayment($order) && $_helper->enabledFrontCapture() && $_helper->frontendCaptureAllowedForCustomer(Mage::getSingleton('customer/session')->getCustomer())): ?>
+    <span class="separator">|</span>
+    <a href="javascript:void(0);" class="link-reorder" onclick="$('po_method_pay_methods_container').show();"><?php echo $this->__('PAY') ?></a>
+<?php endif; ?>

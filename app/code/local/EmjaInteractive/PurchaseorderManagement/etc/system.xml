@@ -5,9 +5,20 @@
            <groups>
                <purchaseorder>
                    <fields>
+                       <customer_groups translate="label">
+                           <label>Payment from Customer Groups</label>
+                           <frontend_type>multiselect</frontend_type>
+                           <source_model>emjainteractive_purchaseordermanagement/adminhtml_system_config_source_customer_group</source_model>
+                           <sort_order>70</sort_order>
+                           <show_in_default>1</show_in_default>
+                           <show_in_website>1</show_in_website>
+                           <show_in_store>0</show_in_store>
+                       </customer_groups>
+
                        <default_limit translate="label">
                            <label>Default Limit</label>
                            <frontend_type>text</frontend_type>
+                           <validate>validate-number</validate>
                            <sort_order>2000</sort_order>
                            <show_in_default>1</show_in_default>
                            <show_in_website>1</show_in_website>
@@ -31,6 +42,26 @@
                            <show_in_website>1</show_in_website>
                            <show_in_store>1</show_in_store>
                        </exceeded_limit_message>
+
+                       <email_template translate="label">
+                           <label>PO Order Email Template</label>
+                           <frontend_type>select</frontend_type>
+                           <source_model>emjainteractive_purchaseordermanagement/adminhtml_system_config_source_email_template</source_model>
+                           <sort_order>2025</sort_order>
+                           <show_in_default>1</show_in_default>
+                           <show_in_website>1</show_in_website>
+                           <show_in_store>1</show_in_store>
+                       </email_template>
+
+                       <guest_email_template translate="label">
+                           <label>PO Order Guest Email Template</label>
+                           <frontend_type>select</frontend_type>
+                           <source_model>emjainteractive_purchaseordermanagement/adminhtml_system_config_source_email_template</source_model>
+                           <sort_order>2026</sort_order>
+                           <show_in_default>1</show_in_default>
+                           <show_in_website>1</show_in_website>
+                           <show_in_store>1</show_in_store>
+                       </guest_email_template>
 
                        <send_po_invoice_attached translate="label">
                             <label>Send PO Invoice attached to Order Confirmation</label>
@@ -93,6 +124,38 @@
                        <order_status>
                            <source_model>emjainteractive_purchaseordermanagement/adminhtml_system_config_source_order_status_newprocessing</source_model>
                        </order_status>
+
+                       <enable_frontend translate="label">
+                           <label>Enable Frontend Capture</label>
+                           <frontend_type>select</frontend_type>
+                           <source_model>adminhtml/system_config_source_yesno</source_model>
+                           <sort_order>2100</sort_order>
+                           <show_in_default>1</show_in_default>
+                           <show_in_website>1</show_in_website>
+                           <show_in_store>1</show_in_store>
+                       </enable_frontend>
+
+                       <frontend_customer_groups translate="label">
+                           <label>Allow Frontend Capture for Customer Groups</label>
+                           <frontend_type>multiselect</frontend_type>
+                           <source_model>emjainteractive_purchaseordermanagement/adminhtml_system_config_source_customer_group</source_model>
+                           <sort_order>2110</sort_order>
+                           <show_in_default>1</show_in_default>
+                           <show_in_website>1</show_in_website>
+                           <show_in_store>0</show_in_store>
+                           <depends><enable_frontend>1</enable_frontend></depends>
+                       </frontend_customer_groups>
+
+                       <frontend_capture_methods translate="label">
+                           <label>Frontend Online Capture Methods</label>
+                           <frontend_type>multiselect</frontend_type>
+                           <source_model>emjainteractive_purchaseordermanagement/adminhtml_system_config_source_payment_allmethods</source_model>
+                           <sort_order>2120</sort_order>
+                           <show_in_default>1</show_in_default>
+                           <show_in_website>0</show_in_website>
+                           <show_in_store>0</show_in_store>
+                           <depends><enable_frontend>1</enable_frontend></depends>
+                       </frontend_capture_methods>
                    </fields>
                </purchaseorder>
            </groups>

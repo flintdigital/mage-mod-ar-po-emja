@@ -2,7 +2,7 @@
 <config>
     <modules>
         <EmjaInteractive_PurchaseorderManagement>
-            <version>2.9.0</version>
+            <version>3.0.6</version>
         </EmjaInteractive_PurchaseorderManagement>
     </modules>
     <global>
@@ -56,14 +56,14 @@
                     <method_purchaseorder>EmjaInteractive_PurchaseorderManagement_Model_Payment_Method_Purchaseorder</method_purchaseorder>
                 </rewrite>
             </payment>
-			<sales>
+            <sales>
                 <rewrite>
                     <order>EmjaInteractive_PurchaseorderManagement_Model_Sales_Order</order>
                 </rewrite>
             </sales>
-			<core>
+            <core>
                 <rewrite>
-					<email_template>EmjaInteractive_PurchaseorderManagement_Model_Email_Template</email_template>
+                    <email_template>EmjaInteractive_PurchaseorderManagement_Model_Email_Template</email_template>
                     <email_template_mailer>EmjaInteractive_PurchaseorderManagement_Model_Email_Template_Mailer</email_template_mailer>
                 </rewrite>
             </core>
@@ -92,7 +92,7 @@
                         <class>emjainteractive_purchaseordermanagement/sales_order_observer</class>
                         <method>saveNetTerms</method>
                     </emjainteractive_purchaseordermanagement>
-                    
+
                     <emjainteractive_purchaseordermanagement_limit>
                         <class>emjainteractive_purchaseordermanagement/sales_order_observer</class>
                         <method>isPOLimitExceeded</method>
@@ -109,7 +109,7 @@
                     </emjainteractive_purchaseordermanagement>
                 </observers>
             </sales_order_save_after>
-            
+
             <sales_order_invoice_pay>
                 <observers>
                     <emjainteractive_purchaseordermanagement>
@@ -127,7 +127,7 @@
                     </emjainteractive_purchaseordermanagement>
                 </observers>
             </sales_order_item_cancel>
-            
+
             <sales_order_resource_init_virtual_grid_columns>
                 <observers>
                     <emjainteractive_purchaseordermanagement>
@@ -136,7 +136,49 @@
                     </emjainteractive_purchaseordermanagement>
                 </observers>
             </sales_order_resource_init_virtual_grid_columns>
+
+            <core_block_abstract_to_html_before>
+                <observers>
+                    <emjainteractive_purchaseordermanagement_payment_block>
+                        <class>emjainteractive_purchaseordermanagement/sales_order_observer</class>
+                        <method>overrideOrderEmailTemplates</method>
+                    </emjainteractive_purchaseordermanagement_payment_block>
+                </observers>
+            </core_block_abstract_to_html_before>
+
+            <sales_order_load_after>
+                <observers>
+                    <emjainteractive_purchaseordermanagement>
+                        <class>emjainteractive_purchaseordermanagement/sales_order_observer</class>
+                        <method>overrideOrderEmailTemplatesAfterLoad</method>
+                    </emjainteractive_purchaseordermanagement>
+                </observers>
+            </sales_order_load_after>
+            <sales_order_save_before>
+                <observers>
+                    <emjainteractive_purchaseordermanagement>
+                        <class>emjainteractive_purchaseordermanagement/sales_order_observer</class>
+                        <method>overrideOrderEmailTemplatesAfterLoad</method>
+                    </emjainteractive_purchaseordermanagement>
+                </observers>
+            </sales_order_save_before>
         </events>
+        <sales>
+            <order>
+                <statuses>
+                    <purchaseorder_pending_payment translate="label">
+                        <label>Shipped, pending payment</label>
+                    </purchaseorder_pending_payment>
+                </statuses>
+                <states>
+                    <processing>
+                        <statuses>
+                            <purchaseorder_pending_payment />
+                        </statuses>
+                    </processing>
+                </states>
+            </order>
+        </sales>
     </global>
     <adminhtml>
         <translate>
@@ -160,7 +202,6 @@
 
             <adminhtml_block_html_before>
                 <observers>
-
                     <emjainteractive_purchaseordermanagement_submit_refund>
                         <class>emjainteractive_purchaseordermanagement/adminhtml_sales_order_creditmemo_create_observer</class>
                         <method>beforeHtml</method>
@@ -170,6 +211,11 @@
                         <class>emjainteractive_purchaseordermanagement/adminhtml_sales_order_grid_observer</class>
                         <method>beforeHtml</method>
                     </emjainteractive_purchaseordermanagement_block_before_html>
+
+                    <emjainteractive_purchaseordermanagement_customer_account_before_html>
+                        <class>emjainteractive_purchaseordermanagement/observer</class>
+                        <method>disablePoTermsEdit</method>
+                    </emjainteractive_purchaseordermanagement_customer_account_before_html>
                 </observers>
             </adminhtml_block_html_before>
         </events>
@@ -181,24 +227,46 @@
             </updates>
         </layout>
     </adminhtml>
+    <frontend>
+        <layout>
+            <updates>
+                <emjainteractive_purchaseordermanagement>
+                    <file>emjainteractive/purchaseordermanagement.xml</file>
+                </emjainteractive_purchaseordermanagement>
+            </updates>
+        </layout>
+        <routers>
+            <emjainteractive_purchaseordermanagement>
+                <use>standard</use>
+                <args>
+                    <module>EmjaInteractive_PurchaseorderManagement</module>
+                    <frontName>po</frontName>
+                </args>
+            </emjainteractive_purchaseordermanagement>
+        </routers>
+        <secure_url>
+            <po_capture_capture>/po/capture</po_capture_capture>
+        </secure_url>
+    </frontend>
     <admin>
         <routers>
-           <adminhtml>
-               <args>
-                   <modules>
-                       <emjainteractive_purchaseordermanagement after="Mage_Adminhtml">EmjaInteractive_PurchaseorderManagement_Adminhtml</emjainteractive_purchaseordermanagement>
-                   </modules>
-               </args>
-           </adminhtml>
-       </routers>
+            <adminhtml>
+                <args>
+                    <modules>
+                        <emjainteractive_purchaseordermanagement after="Mage_Adminhtml">EmjaInteractive_PurchaseorderManagement_Adminhtml</emjainteractive_purchaseordermanagement>
+                    </modules>
+                </args>
+            </adminhtml>
+        </routers>
     </admin>
     <default>
         <payment>
             <purchaseorder>
+                <customer_groups>1,2,3</customer_groups>
                 <default_limit>5000</default_limit>
                 <default_net_terms>30</default_net_terms>
-                <exceeded_limit_message>Sorry, you have surpassed your PO LIMIT</exceeded_limit_message>
-				<send_po_invoice_attached>0</send_po_invoice_attached>
+                <exceeded_limit_message>Sorry, you have surpassed your PO Limit</exceeded_limit_message>
+                <send_po_invoice_attached>0</send_po_invoice_attached>
                 <paid_icon>paid.png</paid_icon>
                 <capture_methods>authorizenet</capture_methods>
             </purchaseorder>

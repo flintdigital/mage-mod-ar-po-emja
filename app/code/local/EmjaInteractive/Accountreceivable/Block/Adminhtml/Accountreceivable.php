@@ -27,23 +27,23 @@ class EmjaInteractive_Accountreceivable_Block_Adminhtml_Accountreceivable extend
 	public function getAllOrderCollection()
     {
         return Mage::getResourceModel('sales/order_grid_collection')
-				->addAttributeToFilter('payment_method', 'purchaseorder')
-				->addAttributeToSort('entity_id', 'DESC');
+				->addAttributeToFilter('main_table.payment_method', 'purchaseorder')
+				->addAttributeToSort('main_table.entity_id', 'DESC');
     }
 	
 	public function getOrderCollection($from, $to)
     {
         $collection = Mage::getResourceModel('sales/order_grid_collection')
-				->addAttributeToFilter('payment_method', 'purchaseorder')
-				->addAttributeToFilter('status', array('nin' => array('complete', 'canceled')));
+				->addAttributeToFilter('main_table.payment_method', 'purchaseorder')
+				->addAttributeToFilter('main_table.status', array('nin' => array('complete', 'canceled')));
 		
 		if($from != NULL)
-			$collection->addAttributeToFilter('created_at', array('from' => $from));
+			$collection->addAttributeToFilter('main_table.created_at', array('from' => $from));
 		
 		if($to != NULL)
-			$collection->addAttributeToFilter('created_at', array('to' => $to));
+			$collection->addAttributeToFilter('main_table.created_at', array('to' => $to));
 		
-		$collection->addAttributeToSort('entity_id', 'DESC');
+		$collection->addAttributeToSort('main_table.entity_id', 'DESC');
 		
 		return $collection;
     }
@@ -53,12 +53,12 @@ class EmjaInteractive_Accountreceivable_Block_Adminhtml_Accountreceivable extend
         $collection = Mage::getResourceModel('sales/order_creditmemo_grid_collection');
 		
 		if($from != NULL)
-			$collection->addAttributeToFilter('created_at', array('from' => $from));
+			$collection->addAttributeToFilter('main_table.created_at', array('from' => $from));
 		
 		if($to != NULL)
-			$collection->addAttributeToFilter('created_at', array('to' => $to));
+			$collection->addAttributeToFilter('main_table.created_at', array('to' => $to));
 		
-		$collection->addAttributeToSort('entity_id', 'DESC');
+		$collection->addAttributeToSort('main_table.entity_id', 'DESC');
 		
 		return $collection;
     }
@@ -68,12 +68,12 @@ class EmjaInteractive_Accountreceivable_Block_Adminhtml_Accountreceivable extend
         $collection = Mage::getResourceModel('sales/order_invoice_grid_collection');
 		
 		if($from != NULL)
-			$collection->addAttributeToFilter('created_at', array('from' => $from));
+			$collection->addAttributeToFilter('main_table.created_at', array('from' => $from));
 		
 		if($to != NULL)
-			$collection->addAttributeToFilter('created_at', array('to' => $to));
+			$collection->addAttributeToFilter('main_table.created_at', array('to' => $to));
 		
-		$collection->addAttributeToSort('entity_id', 'DESC');
+		$collection->addAttributeToSort('main_table.entity_id', 'DESC');
 		
 		return $collection;
 	}

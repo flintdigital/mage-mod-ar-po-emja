@@ -3,7 +3,7 @@ $installer = $this;
 $installer->startSetup();
 
 $installer->run("
-CREATE TABLE `{$this->getTable('emjainteractive_purchaseordermanagement/capture_payment')}` (
+CREATE TABLE IF NOT EXISTS `{$this->getTable('emjainteractive_purchaseordermanagement/capture_payment')}` (
   `entity_id` int(10) unsigned NOT NULL auto_increment,
   `parent_id` int(10) unsigned NOT NULL,
   `base_shipping_captured` decimal(12,4) default NULL,

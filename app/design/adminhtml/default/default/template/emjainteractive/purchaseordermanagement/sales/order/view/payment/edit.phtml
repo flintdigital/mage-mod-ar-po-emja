@@ -1,0 +1,40 @@
+<?php /** @var EmjaInteractive_PurchaseorderManagement_Block_Adminhtml_Sales_Order_View_Payment_Edit $this */ ?>
+<div id="po_method_configure" class="product-configure-popup" style="display: none;">
+    <form action="<?php echo $this->getChangePoNumberUrl() ?>" id="po_method_configure_form" method="post">
+        <?php echo $this->getBlockHtml('formkey')?>
+        <div id="po_method_config_form">
+            <div class="entry-edit">
+                <div class="entry-edit-head">
+                    <h4 class="icon-head fieldset-legend"><?php echo $this->__('Edit Purchase Order Information') ?></h4>
+                </div>
+                <div class="content">
+                    <table cellspacing="0" class="form-list">
+                        <tbody>
+                            <tr>
+                                <td class="label">
+                                    <label for=""><?php echo $this->__('PO NUMBER') ?> <span class="required">*</span></label>
+                                </td>
+                                <td class="value">
+                                    <input id="po_number_edit" name="purchaseorder[number]" value="<?php echo $this->escapeHtml($this->getPayment()->getPoNumber()) ?>" class=" required-entry input-text required-entry" type="text">
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="buttons-set a-right">
+                    <button type="button" class="scalable" onclick="$('po_method_configure').hide();" id="gift_options_cancel_button"><span><span><span><?php echo $this->__('Cancel') ?></span></span></span></button>
+                    <button type="button" class="scalable" onclick="poMethodEditForm.submit();" id="gift_options_ok_button"><span><span><span><?php echo $this->__('OK') ?></span></span></span></button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<script type="text/javascript">
+    var poMethodEditForm = new varienForm('po_method_configure_form', '');
+    document.observe('dom:loaded', function() {
+        var pmHead = $$('.head-payment-method');
+        if (pmHead.length > 0) {
+            pmHead[0].up(0).insert('<div class="tools"><a href="javascript:void(0);" onclick="$(\'po_method_configure\').show();">Change PO Number</a></div>');
+        }
+    });
+</script>

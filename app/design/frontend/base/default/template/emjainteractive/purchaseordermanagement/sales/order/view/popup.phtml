@@ -1,0 +1,63 @@
+<?php $order = $this->getOrder(); ?>
+<?php $_helper = Mage::helper('emjainteractive_purchaseordermanagement'); ?>
+<?php if ($_helper->isPurchaseOrder($order) && $_helper->canMakePayment($order) && $_helper->enabledFrontCapture() && $_helper->frontendCaptureAllowedForCustomer(Mage::getSingleton('customer/session')->getCustomer())): ?>
+    <style type="text/css">
+        .po_method_popup {
+            background: #fafafa;
+            border: 1px solid #d6d6d6;
+            left: 50%;
+            margin: 0 0 0 -271px;
+            position: fixed;
+            padding: 10px 20px 10px 20px;
+            top: 30%;
+            width: 540px;
+            z-index: 400;
+            text-align: left;
+        }
+    </style>
+    <?php $methods = $this->getMethods(); ?>
+    <?php $oneMethod = count($methods) <= 1; ?>
+    <script type="text/javascript">
+        var emjaCapturePayment = new CapturePayment('po_method_pay_methods', 'po_edit_form');
+    </script>
+    <div id="po_method_pay_methods_container" class="po_method_popup" style="display: none;">
+        <div class="fieldset">
+            <h2 class="legend"><?php echo $this->__('Choose Payment Method') ?></h2>
+            <form id="po_edit_form" action="<?php echo Mage::getUrl('po/capture', array('order_id' => $order->getId())) ?>" method="post">
+            <fieldset>
+                <?php echo $this->getBlockHtml('formkey') ?>
+                <dl class="sp-methods" id="po-payment-method-load">
+                    <?php foreach ($methods as $_method): ?>
+                        <?php $_code = $_method->getCode(); ?>
+                        <dt>
+                            <?php if(!$oneMethod): ?>
+                                <input id="p_method_<?php echo $_code ?>" value="<?php echo $_code ?>" type="radio" name="payment[method]" title="<?php echo $this->htmlEscape($_method->getTitle()) ?>" onclick="emjaCapturePayment.switchMethod('<?php echo $_code ?>')" class="radio" />
+                            <?php else: ?>
+                                <span class="no-display"><input id="p_method_<?php echo $_code ?>" value="<?php echo $_code ?>" type="radio" name="payment[method]" checked="checked" class="radio" /></span>
+                                <?php $oneMethod = $_code; ?>
+                            <?php endif; ?>
+                            <label for="p_method_<?php echo $_code ?>"><?php echo $this->escapeHtml($this->getMethodTitle($_method)) ?> <?php echo $this->getMethodLabelAfterHtml($_method) ?></label>
+                        </dt>
+                        <?php if ($html = $this->getPaymentMethodFormHtml($_method)): ?>
+                            <dd>
+                                <?php echo $html; ?>
+                            </dd>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                </dl>
+                <div class="buttons-set">
+                    <button type="button" title="Continue" class="button submit-button"><span><span>PAY</span></span></button>
+                    <button type="button" title="Continue" class="button cancel-button" onclick="$('po_method_pay_methods_container').hide();"><span><span>CANCEL</span></span></button>
+                </div>
+            </fieldset>
+            </form>
+        </div>
+    </div>
+    <script type="text/javascript">
+        //<![CDATA[
+        document.observe("dom:loaded", function() {
+            emjaCapturePayment.init();
+        });
+        //]]>
+    </script>
+<?php endif; ?>

@@ -61,7 +61,7 @@ class EmjaInteractive_PurchaseorderManagement_Model_Sales_Order extends Mage_Sal
             }
         }
 
-        // Set all required params and send emails
+        // Set all required params and send email
         $mailer->setSender(Mage::getStoreConfig(self::XML_PATH_EMAIL_IDENTITY, $storeId));
         $mailer->setStoreId($storeId);
         $mailer->setTemplateId($templateId);
@@ -72,7 +72,7 @@ class EmjaInteractive_PurchaseorderManagement_Model_Sales_Order extends Mage_Sal
             )
         );
 
-		if (Mage::getStoreConfig('payment/purchaseorder/send_po_invoice_attached')) {
+		if (Mage::helper('emjainteractive_purchaseordermanagement')->canSendPdf($this)) {
 			$pdf = Mage::getModel('emjainteractive_purchaseordermanagement/sales_order_pdf')->getPoInvoiceForAttachment($this->getId());
 			if ($pdf) {
 				$mailer->addAttachment($pdf->render(), 'order'.Mage::getSingleton('core/date')->date('Y-m-d_H-i-s').'.pdf');

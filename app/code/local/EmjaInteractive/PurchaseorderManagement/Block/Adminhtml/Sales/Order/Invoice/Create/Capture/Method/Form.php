@@ -33,6 +33,10 @@ class EmjaInteractive_PurchaseorderManagement_Block_Adminhtml_Sales_Order_Invoic
 
     protected function _getAllowedCaptureMethods()
     {
+        if ($this->getOrder()->getPayment()->getMethod() != 'purchaseorder') {
+            return array();
+        }
+
         if (is_null($this->_allowedCaptureMethods)) {
             if (strpos(Mage::getStoreConfig('payment/purchaseorder/capture_methods'), ',') !== false) {
                 $this->_allowedCaptureMethods = explode(',', Mage::getStoreConfig('payment/purchaseorder/capture_methods'));

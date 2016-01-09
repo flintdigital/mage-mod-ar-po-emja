@@ -26,6 +26,26 @@ class EmjaInteractive_PurchaseorderManagement_Block_Payment_Info_Purchaseorder
         $netTerms = '';
         if ($this->getInfo()->getOrder()) {
             $netTerms =  $this->getInfo()->getOrder()->getNetTerms();
+            if (empty($netTerms)) {
+                if ($this->getInfo()->getOrder()->getCustomer()) {
+                    $customer = $this->getInfo()->getOrder()->getCustomer();
+                } else if (!$this->getInfo()->getOrder()->getCustomer() && $this->getInfo()->getOrder()->getCustomerId()) {
+                    $customer = Mage::getModel('customer/customer')->load($this->getInfo()->getOrder()->getCustomerId());
+                }
+                if (isset($customer) && $customer->getId()) {
+                    $netTerms = $customer->getNetTerms()
+                        ? $customer->getNetTerms()
+                        : Mage::getStoreConfig('payment/purchaseorder/default_net_terms');
+                }
+            }
+        }
+        if (empty($netTerms) && $this->getInfo()->getQuote()) {
+            $netTerms =  $this->getInfo()->getQuote()->getNetTerms();
+            if (empty($netTerms) && $this->getInfo()->getQuote()->getCustomer()) {
+                $netTerms = $this->getInfo()->getQuote()->getCustomer()->getNetTerms()
+                    ? $this->getInfo()->getQuote()->getCustomer()->getNetTerms()
+                    : Mage::getStoreConfig('payment/purchaseorder/default_net_terms');
+            }
         }
         return $netTerms;
     }

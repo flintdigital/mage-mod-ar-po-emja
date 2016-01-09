@@ -164,7 +164,7 @@ class EmjaInteractive_PurchaseorderManagement_Model_Sales_Order_Pdf extends Mage
 
 	public function getPoInvoiceForAttachment($orderId)
 	{
-		Mage::register('emja_printing', true);
+		//Mage::register('emja_printing', true);
         $pdf = null;
         
 		$orders = Mage::getResourceModel('sales/order_collection')
@@ -427,5 +427,49 @@ class EmjaInteractive_PurchaseorderManagement_Model_Sales_Order_Pdf extends Mage
             $token = strtok("\n");
             $this->_yPosition -= 15;
         }
+    }
+
+    /**
+     * Calculate address height
+     *
+     * @param  array $address
+     * @return int Height
+     */
+    protected function _calcAddressHeight($address)
+    {
+        $y = 0;
+        foreach ($address as $value){
+            if ($value !== '') {
+                $text = array();
+                foreach (Mage::helper('core/string')->str_split($value, 55, true, true) as $_value) {
+                    $text[] = $_value;
+                }
+                foreach ($text as $part) {
+                    $y += 15;
+                }
+            }
+        }
+        return $y;
+    }
+
+    protected function _setFontRegular($object, $size = 7)
+    {
+        $font = Zend_Pdf_Font::fontWithName(Zend_Pdf_Font::FONT_HELVETICA);
+        $object->setFont($font, $size);
+        return $font;
+    }
+
+    protected function _setFontBold($object, $size = 7)
+    {
+        $font = Zend_Pdf_Font::fontWithName(Zend_Pdf_Font::FONT_HELVETICA);
+        $object->setFont($font, $size);
+        return $font;
+    }
+
+    protected function _setFontItalic($object, $size = 7)
+    {
+        $font = Zend_Pdf_Font::fontWithName(Zend_Pdf_Font::FONT_HELVETICA);
+        $object->setFont($font, $size);
+        return $font;
     }
 }

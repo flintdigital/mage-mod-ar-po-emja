@@ -191,4 +191,50 @@ class EmjaInteractive_PurchaseorderManagement_Model_Sales_Order_Observer
         }
     }
 
+
+    public function overrideOrderEmailTemplates(Varien_Event_Observer $observer)
+    {
+        $helper = Mage::helper('emjainteractive_purchaseordermanagement');
+        $block = $observer->getBlock();
+        if ($block && $block->getInfo() && $block->getInfo()->getOrder()) {
+            if (!($block->getInfo()->getOrder() instanceof Mage_Sales_Model_Order)) {
+                $helper->resetEmailTemplates();
+                return $this;
+            }
+            if (!$helper->isPurchaseOrder($block->getInfo()->getOrder())) {
+                $helper->resetEmailTemplates();
+                return $this;
+            }
+        } else {
+            $helper->resetEmailTemplates();
+            return $this;
+        }
+
+        /** @var Mage_Sales_Model_Order $order */
+        $order = $block->getInfo()->getOrder();
+
+        foreach (debug_backtrace(0) as $line) {
+			if (!isset($line['class'])) {
+				continue;
+			}
+            $emailType = $helper->getEmailCodeByMethod($line['class'], $line['function']);
+            switch ($emailType) {
+                case 'order':
+                    $helper->replaceEmailTemplates($order);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    public function overrideOrderEmailTemplatesAfterLoad(Varien_Event_Observer $observer)
+    {
+        $order = $observer->getOrder();
+        $helper = Mage::helper('emjainteractive_purchaseordermanagement');
+        $helper->resetEmailTemplates();
+        if ($helper->isPurchaseOrder($order)) {
+            $helper->replaceEmailTemplates($order);
+        }
+    }
 }

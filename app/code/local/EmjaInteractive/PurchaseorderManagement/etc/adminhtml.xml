@@ -29,6 +29,17 @@
                             </salesroot>
                         </children>
                     </report>
+                    <purchaseorder translate="title" module="emjainteractive_purchaseordermanagement">
+                        <title>Purchase Order</title>
+                        <children>
+                            <edit_terms translate="title" module="emjainteractive_purchaseordermanagement">
+                                <title>Edit Terms</title>
+                            </edit_terms>
+                            <process_offline_invoices translate="title" module="emjainteractive_purchaseordermanagement">
+                                <title>Process Offline Invoices</title>
+                            </process_offline_invoices>
+                        </children>
+                    </purchaseorder>
                 </children>
             </admin>
         </resources>

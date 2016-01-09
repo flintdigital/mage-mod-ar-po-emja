@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<layout version="0.1.0">
+    <customer_account_index>
+        <reference name="customer_account_dashboard_info">
+            <block type="core/text_list" name="customer.account.dashboard.info.extra">
+                <block type="emjainteractive_purchaseordermanagement/customer_account_dashboard_info" template="emjainteractive/purchaseordermanagement/customer/account/dashboard/po_info.phtml" />
+            </block>
+        </reference>
+    </customer_account_index>
+    <sales_order_view>
+        <reference name="head">
+            <action method="addItem"><type>skin_js</type><name>purchaseordermanagement/capture.js</name></action>
+        </reference>
+        <reference name="sales.order.info.buttons">
+            <block type="core/template" template="emjainteractive/purchaseordermanagement/sales/order/view/buttons.phtml" name="po.order.buttons" />
+        </reference>
+        <reference name="before_body_end">
+            <block type="emjainteractive_purchaseordermanagement/sales_order_view_popup" template="emjainteractive/purchaseordermanagement/sales/order/view/popup.phtml" name="po.order.popup" />
+        </reference>
+    </sales_order_view>
+</layout>

@@ -4,6 +4,7 @@
     <adminhtml_sales_order_view>
         <reference name="content">
             <block type="emjainteractive_purchaseordermanagement/adminhtml_sales_order_view_payment_capture" name="sales_order_payment_capture" />
+            <block type="emjainteractive_purchaseordermanagement/adminhtml_sales_order_view_payment_edit" name="sales_order_payment_edit" before="sales_order_edit" />
         </reference>
     </adminhtml_sales_order_view>
 

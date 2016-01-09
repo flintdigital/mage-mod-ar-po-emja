@@ -18,6 +18,13 @@ class EmjaInteractive_PurchaseorderManagement_Model_Adminhtml_Sales_Order_Grid_O
                  'label'=> Mage::helper('sales')->__('Print PO Invoice'),
                  'url'  => $block->getUrl('*/po_sales_order/pdforders'),
             ));
+
+            if (Mage::getSingleton('admin/session')->isAllowed('purchaseorder/process_offline_invoices')) {
+                $block->getMassactionBlock()->addItem('process_offline_invoice', array(
+                    'label' => Mage::helper('sales')->__('Process Offline Invoices'),
+                    'url' => $block->getUrl('*/po_sales_order/processOfflineInvoices')
+                ));
+            }
         }
     }
 }

@@ -32,12 +32,13 @@ if ($attributeId) {
     ");
 }
 
-$status = Mage::getModel('sales/order_status')
-    ->setLabel(Mage::helper('emjainteractive_purchaseordermanagement')->__('Shipped, pending payment'))
-    ->setStatus(EmjaInteractive_PurchaseorderManagement_Model_Sales_Order_Status::STATUS_PURCHASEORDER_PENDING_PAYMENT)
-    ->save();
-
-$status->assignState(Mage_Sales_Model_Order::STATE_PROCESSING, 0);
+$status = Mage::getModel('sales/order_status');
+if ($status->getResource()) {
+    $status->setLabel(Mage::helper('emjainteractive_purchaseordermanagement')->__('Shipped, pending payment'))
+        ->setStatus(EmjaInteractive_PurchaseorderManagement_Model_Sales_Order_Status::STATUS_PURCHASEORDER_PENDING_PAYMENT)
+        ->save();
+    $status->assignState(Mage_Sales_Model_Order::STATE_PROCESSING, 0);
+}
 
 $installer->getConnection()->addColumn($this->getTable('sales/order'), 'net_terms', 'TEXT NULL');
 $installer->getConnection()->addColumn($this->getTable('sales/order_grid'), 'net_terms', 'TEXT NULL');
