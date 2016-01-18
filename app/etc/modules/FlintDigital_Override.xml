@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <FlintDigital_Override>
+            <active>true</active>
+            <codePool>local</codePool>
+        </FlintDigital_Override>
+    </modules>
+</config>

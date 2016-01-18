@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<config>
+ 
+    <modules>  
+        <FlintDigital_Override>  
+            <version>0.0.1</version>  
+        </FlintDigital_Override>  
+    </modules>
+  
+    <!--    <admin>
+        <routers>
+            <adminhtml>
+                <args>
+                    <modules>
+                        <FlintDigital_Override before="Mage_Adminhtml">FlintDigital_Override</FlintDigital_Override>
+                    </modules>
+                </args>
+            </adminhtml>
+        </routers>
+    </admin>-->
+     
+    <global>
+        <blocks>
+            <adminhtml>
+                <rewrite>
+                    <sales_order_invoice_view>FlintDigital_Override_Block_Adminhtml_Sales_Order_Invoice_View</sales_order_invoice_view>
+                </rewrite>
+            </adminhtml>
+        </blocks>
+        
+        <models>
+            <sales>
+                <rewrite>
+                    <order_pdf_invoice>FlintDigital_Override_Model_Sales_Order_Pdf_Invoice</order_pdf_invoice>
+                </rewrite>
+            </sales>
+        </models>
+    </global>
+    
+    <!--    <frontend>
+        <routers>
+            <checkout>
+                <args>
+                    <modules>
+                         <FlintDigital_Override before="Mage_Checkout">FlintDigital_Override_Checkout</FlintDigital_Override>
+                    </modules>
+                </args>
+            </checkout>
+        </routers>
+    </frontend>-->
+         
+</config>

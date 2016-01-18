@@ -75,7 +75,8 @@ class EmjaInteractive_PurchaseorderManagement_Model_Sales_Order extends Mage_Sal
 		if (Mage::helper('emjainteractive_purchaseordermanagement')->canSendPdf($this)) {
 			$pdf = Mage::getModel('emjainteractive_purchaseordermanagement/sales_order_pdf')->getPoInvoiceForAttachment($this->getId());
 			if ($pdf) {
-				$mailer->addAttachment($pdf->render(), 'order'.Mage::getSingleton('core/date')->date('Y-m-d_H-i-s').'.pdf');
+                            $mailer->addAttachment($pdf->render(), 'MethodSevenInvoice_#'.$this->getIncrementId().'.pdf');
+//				$mailer->addAttachment($pdf->render(), 'order'.Mage::getSingleton('core/date')->date('Y-m-d_H-i-s').'.pdf');
 			}
 		}
 		
