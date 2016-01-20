@@ -89,12 +89,22 @@ class FlintDigital_Override_Model_Sales_Order_Pdf_Invoice extends Mage_Sales_Mod
                     ->setInvoiceFilter($invoice->getId())
                     ->load();
 
-            if (!empty($comments)) {
+            if (count($comments)) {
+                $this->y -= 35;
+                $this->_echo($page, 'Comments from Method Seven', $this->y, 20, 15, true);
                 foreach ($comments as $comment) {
-                    $this->y -= 18;
                     $_value = $comment->getComment();
-                    $this->_echo($page, $_value, $this->y, 20);
+                    $comment = $this->splitLine($_value, 120);
+                    
+                    foreach($comment as $line) {
+                        $this->y -= 18;
+                        $this->_echo($page, $line, $this->y, 20, 11);
+                    }
+
+                    
                 }
+                
+                $this->y -= 18;
             }
         }
 
@@ -126,6 +136,33 @@ class FlintDigital_Override_Model_Sales_Order_Pdf_Invoice extends Mage_Sales_Mod
         $_value = "us at $phone Monday - Friday, 8am - 5pm PST.";
 
         $this->_echo($page, $_value, $this->y, 20);
+    }
+    
+    private function splitLine($string, $maxCharCount) {
+        $lines = array();
+        
+        if(strlen($string) > $maxCharCount) {
+            $words = explode(' ', $string);
+            
+            $line = '';
+            
+            foreach($words as $word) {
+                if(strlen($line.' '.$word) > $maxCharCount) {
+                    $lines[] = $line;
+                    $line = '';
+                }
+                
+                $line .= strlen($line) ? ' '.$word : $word;
+            }
+            
+            $lines[] = $line;
+            
+        }
+        
+        else
+            $lines[] = $string;
+        
+        return $lines;
     }
 
     protected function insertOrderData($page, $order) {
@@ -202,7 +239,7 @@ class FlintDigital_Override_Model_Sales_Order_Pdf_Invoice extends Mage_Sales_Mod
         $items = array();
         $width = 530;
         $lineHeight = 25;
-        $subLineHeight = 15;
+        $subLineHeight = 17;
         $headerHeight = 20;
         $totalsHeight = 50;
         $top = $this->y;
@@ -235,8 +272,8 @@ class FlintDigital_Override_Model_Sales_Order_Pdf_Invoice extends Mage_Sales_Mod
             $name = array($orderItem->getName(),);
 
             foreach ($options as $option) {
-                $name[] = $option['label'];
-                $name[] = array_key_exists('print_value', $option) ? $option['print_value'] : $option['value'];
+                $name[] = $option['label'].': '.(array_key_exists('print_value', $option) ? $option['print_value'] : $option['value']);
+//                $name[] = array_key_exists('print_value', $option) ? $option['print_value'] : $option['value'];
             }
 
 
@@ -345,7 +382,7 @@ class FlintDigital_Override_Model_Sales_Order_Pdf_Invoice extends Mage_Sales_Mod
         $page->setFillColor(new Zend_Pdf_Color_GrayScale(0));
 
 //     	//Subtotal
-        $this->_echo($page, 'Subtotal', $top - $textPadding - 2, $left + 10 + $colPaddings[2]);
+        $this->_echo($page, 'Subtotal', $top - $textPadding - 2, $left + 10 + $colPaddings[2], 10);
         $this->_echo($page, '$' . number_format($invoice->getSubtotal(), 2), $top - $textPadding - 2, $left + 10 + $colPaddings[3]);
         $top -=15;
 

@@ -7,7 +7,7 @@
         </FlintDigital_Override>  
     </modules>
   
-    <!--    <admin>
+    <admin>
         <routers>
             <adminhtml>
                 <args>
@@ -17,7 +17,7 @@
                 </args>
             </adminhtml>
         </routers>
-    </admin>-->
+    </admin>
      
     <global>
         <blocks>
